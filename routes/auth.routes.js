@@ -10,14 +10,28 @@ router.get("/signup", (req, res, next) => {
 // POST "/auth/signup" => Crear nuevo usuario (Recoge data del body y crea usuario en BD)
 router.post("/signup", async (req, res, next) => {
   const { username, password } = req.body;
-  console.log(req.body);
+  console.log(username);
 
-  await User.create({
-    username: username,
-    password: password,
-  });
+  try {
+    const userInBD = await User.findOne({username: username})
+    console.log(userInBD)
 
-  res.redirect("/auth/login");
+
+
+
+    // await User.create({
+    //   username: username,
+    //   password: password,
+    // });
+  
+    res.redirect("/auth/login");
+
+  } catch (error) {
+    next(error)
+  }
+
+
+  
 });
 
 // GET "/auth/login" => Renderiza Formulario para acceso perfil.
