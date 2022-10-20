@@ -61,7 +61,7 @@ router.post("/login", async (req, res, next) => {
       return;
     }
     // 2. Password Compare
-    const isPasswordValid = await bcrypt.compare(password, userInBD.password);
+    const isPasswordValid = await bcrypt.compare(password, userLogged.password);
     if (isPasswordValid === false) {
       res.render("auth/login.hbs", {
         messageError: "Wrong Credentials",
@@ -69,16 +69,20 @@ router.post("/login", async (req, res, next) => {
       return;
     }
 
-    req.session.userOnline = userLogged;  // importante para conectar el usuario logeado con el flujo de sesiones de perfil
+    req.session.userOnline = userLogged; // importante para conectar el usuario logeado con el flujo de sesiones de perfil
     res.redirect("/");
-    req.session.save(()=>{
-      res.redirect("/profile")  // se guarda la sesion y se redirecciona
-    })
-
-    
+    req.session.save(() => {
+      res.redirect("/profile"); // se guarda la sesion y se redirecciona
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
 });
 
+// * GET "/auth/logout" => Cerrar Sesion
+router.get("/logout", (req, res, next) => {
+  req.session.destroy(() => {
+    res.redirect("/");
+  });
+});
 module.exports = router;
